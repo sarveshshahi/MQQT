@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EMQX WebSocket Subscriber</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+  <h2>Subscribe to Topic via EMQX WebSocket</h2>
+  <label>Topic: <input id="topic" type="text" value="test/topic" /></label><br/>
+  <button onclick="subscribe()">Subscribe</button>
+  <h3>Messages:</h3>
+  <div id="messages" style="border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto;"></div>
+
+  <script>
+    // Connect to the EMQX WebSocket broker
+    const client = mqtt.connect("wss://push.mozility.com:8084/mqtt");
+
+    client.on("connect", () => {
+      console.log("Connected to EMQX WebSocket broker");
+    });
+
+    client.on("error", (err) => {
+      console.error("Connection error: ", err);
+    });
+
+    function subscribe() {
+      const topic = document.getElementById("topic").value;
+
+      if (client.connected) {
+        client.subscribe(topic, (err) => {
+          if (err) {
+            alert("Failed to subscribe to topic: " + topic);
+          } else {
+            alert("Subscribed to topic: " + topic);
+          }
+        });
+      } else {
+        alert("Not connected to broker.");
+      }
+    }
+
+    client.on("message", (topic, message) => {
+      const messagesDiv = document.getElementById("messages");
+      const newMessage = document.createElement("p");
+      newMessage.textContent = `Topic: ${topic}, Message: ${message.toString()}`;
+      messagesDiv.appendChild(newMessage);
+    });
+  </script>
+</body>
+</html>
