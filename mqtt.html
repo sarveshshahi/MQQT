@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EMQX WebSocket Message Sender</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+  <h2>Send Message via EMQX WebSocket</h2>
+  <label>Topic: <input id="topic" type="text" value="test/topic" /></label><br/>
+  <label>Message: <input id="message" type="text" /></label><br/>
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    // Correct WebSocket URL for MQTT connection
+    const client = mqtt.connect("wss://push.mozility.com:8084/mqtt");
+
+    client.on("connect", () => {
+      console.log("Connected to EMQX WebSocket broker");
+    });
+
+    client.on("error", (err) => {
+      console.error("Connection error: ", err);
+    });
+
+    function sendMessage() {
+      const topic = document.getElementById("topic").value;
+      const message = document.getElementById("message").value;
+
+      if (client.connected) {
+        client.publish(topic, message);
+        alert("Message sent!");
+      } else {
+        alert("Not connected to broker.");
+      }
+    }
+  </script>
+</body>
+</html>
