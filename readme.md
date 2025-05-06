@@ -87,49 +87,57 @@ client.on('message', (topic, message) => {
 
 ---
 
-## 💡 What is a String in MQTT?
-In MQTT, messages are usually sent as strings. A string is a sequence of text characters.
+## 🌐 WebSocket-Based MQTT Workflows
 
-Examples:
-- `"Hello World"` – plain text
-- `"22.5"` – temperature as a string
-- `"ON"` / `"OFF"` – status commands
+### 1. Publish Messages Using `mqtt.html`
+The `mqtt.html` file allows you to publish messages to a topic via a WebSocket connection.
 
-You can also send JSON or binary data, but strings are most common for simple applications.
+#### Steps:
+1. Open `mqtt.html` in a browser.
+2. Enter the **topic** (e.g., `test/topic`) and the **message** you want to send.
+3. Click the **Send** button to publish the message.
+
+#### Code Overview:
+- The file connects to the broker using WebSocket (`wss://push.mozility.com:8084/mqtt`).
+- It uses the `mqtt.js` library to handle the connection and publish messages.
+- Example:
+  ```javascript
+  client.publish(topic, message);
+  ```
+
+---
+
+### 2. Subscribe to Topics Using `subcribesmqtt.html`
+The `subcribesmqtt.html` file allows you to subscribe to a topic and receive messages via a WebSocket connection.
+
+#### Steps:
+1. Open `subcribesmqtt.html` in a browser.
+2. Enter the **topic** you want to subscribe to (e.g., `test/topic`).
+3. Click the **Subscribe** button to start receiving messages.
+4. Messages will appear in the "Messages" section of the page.
+
+#### Code Overview:
+- The file connects to the broker using WebSocket (`wss://push.mozility.com:8084/mqtt`).
+- It uses the `mqtt.js` library to handle the connection and subscription.
+- Example:
+  ```javascript
+  client.subscribe(topic, (err) => {
+      if (!err) {
+          console.log(`Subscribed to topic: ${topic}`);
+      }
+  });
+
+  client.on('message', (topic, message) => {
+      console.log(`Received message: ${message.toString()} on topic: ${topic}`);
+  });
+  ```
 
 ---
 
 ## 🛠 Tools You Can Use
 - 🧪 **MQTT.fx** – GUI client
 - 🖥 **Mosquitto** – Open-source broker and CLI tools
-- 🐍 **paho-mqtt** – Python library
 - 🔧 **Node-RED** – Low-code IoT workflow tool
-
----
-
-## 🧪 Example Flow
-1. Device A publishes `"22.5"` to `home/temperature`.
-2. Broker receives the message.
-3. Device B, subscribed to `home/temperature`, receives `"22.5"`.
-
----
-
-## 📋 Summary Table
-
-| Term         | Description                              |
-|--------------|------------------------------------------|
-| **Broker**   | Server that routes messages             |
-| **Publisher**| Sends messages to a topic               |
-| **Subscriber**| Receives messages from a topic         |
-| **Topic**    | Communication channel (e.g., `home/temp`)|
-| **String**   | Text message sent via MQTT              |
-
----
-
-## 🔗 Useful Links
-- 🌐 [Official site](https://mqtt.org)
-- 📚 [JavaScript client: MQTT.js](https://github.com/mqttjs/MQTT.js)
-- 🧰 [Broker: Mosquitto](https://mosquitto.org/)
 
 ---
 
@@ -159,27 +167,6 @@ npm install mqtt
 
 ### 3. Implement MQTT in Your Code
 - Use the provided examples to connect, publish, and subscribe to topics.
-- For example, to subscribe to a topic:
-  ```javascript
-  const mqtt = require('mqtt');
-
-  const client = mqtt.connect('mqtt://broker.hivemq.com');
-
-  client.on('connect', () => {
-      console.log('Connected to broker');
-      client.subscribe('my/test/topic', () => {
-          console.log('Subscribed to topic');
-      });
-  });
-
-  client.on('message', (topic, message) => {
-      console.log(`Received message: ${message.toString()} on topic: ${topic}`);
-  });
-  ```
-
-### 4. Test Your Setup
-- Use tools like **MQTT.fx** or the provided `subcribesmqtt.html` file to test your MQTT setup.
-- Open `subcribesmqtt.html` in a browser, connect to your broker, and subscribe to a topic.
 
 ---
 
