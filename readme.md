@@ -38,23 +38,29 @@
 ## 🔌 Connecting and Disconnecting
 
 ### ✅ Connect to a Broker
-To connect to an MQTT broker, you'll need:
-- **Host/IP** (e.g., `broker.hivemq.com`)
-- **Port** (default is `1883` for unencrypted, `8883` for encrypted/TLS)
+To connect to an MQTT broker using JavaScript, you'll need the `mqtt.js` library. Install it using npm:
+```bash
+npm install mqtt
+```
 
-#### Example using Python (`paho-mqtt`):
-```python
-import paho.mqtt.client as mqtt
+#### Example using JavaScript (`mqtt.js`):
+```javascript
+const mqtt = require('mqtt');
 
-client = mqtt.Client("client1")  # Unique client ID
-client.connect("broker.hivemq.com", 1883)  # Connect to public broker
-client.loop_start()  # Start loop to process callbacks
+// Connect to the broker
+const client = mqtt.connect('mqtt://broker.hivemq.com');
+
+// Handle connection
+client.on('connect', () => {
+    console.log('Connected to broker');
+});
 ```
 
 ### ❌ Disconnect
-```python
-client.disconnect()
-client.loop_stop()
+```javascript
+client.end(() => {
+    console.log('Disconnected from broker');
+});
 ```
 
 ---
@@ -62,17 +68,21 @@ client.loop_stop()
 ## 📨 Publishing and Subscribing
 
 ### 📤 Publish Message
-```python
-client.publish("home/temperature", "22.5")  # Sends string "22.5" to the topic
+```javascript
+client.publish('home/temperature', '22.5', () => {
+    console.log('Message published');
+});
 ```
 
 ### 📥 Subscribe to Topic
-```python
-def on_message(client, userdata, message):
-    print("Received:", str(message.payload.decode()))
+```javascript
+client.subscribe('home/temperature', () => {
+    console.log('Subscribed to topic');
+});
 
-client.subscribe("home/temperature")
-client.on_message = on_message
+client.on('message', (topic, message) => {
+    console.log(`Received message: ${message.toString()} on topic: ${topic}`);
+});
 ```
 
 ---
@@ -118,13 +128,13 @@ You can also send JSON or binary data, but strings are most common for simple ap
 
 ## 🔗 Useful Links
 - 🌐 [Official site](https://mqtt.org)
-- 📚 [Python client: Eclipse Paho](https://www.eclipse.org/paho/)
+- 📚 [JavaScript client: MQTT.js](https://github.com/mqttjs/MQTT.js)
 - 🧰 [Broker: Mosquitto](https://mosquitto.org/)
 
 ---
 
 ## ✅ Getting Started Checklist
-1. Install MQTT client (e.g., `paho-mqtt` for Python).
+1. Install MQTT client (e.g., `mqtt.js` for JavaScript).
 2. Connect to a broker.
 3. Publish a message.
 4. Subscribe to a topic.
@@ -135,9 +145,9 @@ You can also send JSON or binary data, but strings are most common for simple ap
 ## 🚀 How to Use MQTT in Your Project
 
 ### 1. Install Required Libraries
-For Python, install the `paho-mqtt` library:
+For JavaScript, install the `mqtt.js` library:
 ```bash
-pip install paho-mqtt
+npm install mqtt
 ```
 
 ### 2. Set Up a Broker
@@ -150,17 +160,21 @@ pip install paho-mqtt
 ### 3. Implement MQTT in Your Code
 - Use the provided examples to connect, publish, and subscribe to topics.
 - For example, to subscribe to a topic:
-  ```python
-  import paho.mqtt.client as mqtt
+  ```javascript
+  const mqtt = require('mqtt');
 
-  def on_message(client, userdata, message):
-      print(f"Received message: {message.payload.decode()} on topic {message.topic}")
+  const client = mqtt.connect('mqtt://broker.hivemq.com');
 
-  client = mqtt.Client("my_client_id")
-  client.on_message = on_message
-  client.connect("broker.hivemq.com", 1883)
-  client.subscribe("my/test/topic")
-  client.loop_forever()
+  client.on('connect', () => {
+      console.log('Connected to broker');
+      client.subscribe('my/test/topic', () => {
+          console.log('Subscribed to topic');
+      });
+  });
+
+  client.on('message', (topic, message) => {
+      console.log(`Received message: ${message.toString()} on topic: ${topic}`);
+  });
   ```
 
 ### 4. Test Your Setup
